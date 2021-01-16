@@ -94,10 +94,3 @@ $("button").click(function() {
       $(this).children("textarea").text(dayObject[res.text()]);
     })
   }
-
-
-
-
-
-
-// https://github.com/sguitjens/homework5
