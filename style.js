@@ -1,5 +1,5 @@
 //Variables used to access and edit daily planner
-let workDay = {
+var workDay = {
     "8 AM": "",
     "9 AM": "",
     "10 AM": "",
@@ -23,17 +23,17 @@ let workDay = {
   })
 
 //Pull current date and time
-  $("#date-today h6").text(moment().format("dddd") + ", " + moment().format("MMMM Do YYYY, h:mm"));
+  $("#date-today h6").text(moment().format("dddd") + ", " + moment().format("MMMM Do YYYY, h:mm a"));
 
 //Once the time has passed, change the color of the time box to the preset css code colors
   let counter = 1;
   for(const property in workDay) {
-    let textEntry = "#text-entry" + counter;
+    var textEntry = "#text-entry" + counter;
     $(textEntry).text(workDay[property]);
-    let timeId = "#time" + counter;
-    let presentHour = moment().hour();
-    let timeString = $(timeId).text();
-    let timeNumber = hourNumberFromHourString(timeString);  
+    var timeId = "#time" + counter;
+    var presentHour = moment().hour();
+    var timeString = $(timeId).text();
+    var timeNumber = hourNumberFromHourString(timeString);  
     if(timeNumber < presentHour) {
       $(textEntry).addClass("past");
     } else if (timeNumber > presentHour) {
@@ -69,15 +69,7 @@ $("button").click(function() {
     saveSchedule(hourString, value);
   });
 
-
-// $("#save").click(function() {
-//        alert($("#text-entry1").val());
-//     })
-
-// var getValue = $('#text-entry').val();
-// $('#txt_name').val(getValue);
-
-  function initializeLocalStorage() {
+  function startLocalStorage() {
     localStorage.setItem('workDay', JSON.stringify(workDay));
   };
   
@@ -87,7 +79,7 @@ $("button").click(function() {
   
   function saveSchedule(hourString, val) {
     if(!localStorage.getItem('workDay')) {
-      initializeLocalStorage();
+      startLocalStorage();
     }
   
     let workHours = JSON.parse(localStorage.getItem('workDay'));
@@ -97,7 +89,7 @@ $("button").click(function() {
   }
 
   function updateCalendarTasks(dayObject) {
-    $(".calendar-row").each(function(index) {
+    $(".calendar-row").each(function() {
       let res = $(this).children("div");
       $(this).children("textarea").text(dayObject[res.text()]);
     })
