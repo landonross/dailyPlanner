@@ -1,96 +1,51 @@
-//Variables used to access and edit daily planner
-var workDay = {
-    "8 AM": "",
-    "9 AM": "",
-    "10 AM": "",
-    "11 AM": "",
-    "12 PM": "",
-    "1 PM": "",
-    "2 PM": "",
-    "3 PM": "",
-    "4 PM": "",
-    "5 PM": "",
-  };
-
-  //Wait to run the JS code until the page is loaded
-
-  $(document).ready(function(){
-    if(!localStorage.getItem('workDay')) {
-      updateCalendarTasks(workDay);
-    } else {
-      updateCalendarTasks(JSON.parse(localStorage.getItem('workDay')));
-    }
-  })
-
 //Pull current date and time
-  $("#date-today h6").text(moment().format("dddd") + ", " + moment().format("MMMM Do YYYY, h:mm a"));
+$("#date-today").text(moment().format("dddd") + ", " + moment().format("MMMM Do YYYY, h:mm a"));
 
-//Once the time has passed, change the color of the time box to the preset css code colors
-  let counter = 1;
-  for(const property in workDay) {
-    var textEntry = "#text-entry" + counter;
-    $(textEntry).text(workDay[property]);
-    var timeId = "#time" + counter;
-    var presentHour = moment().hour();
-    var timeString = $(timeId).text();
-    var timeNumber = hourNumberFromHourString(timeString);  
-    if(timeNumber < presentHour) {
-      $(textEntry).addClass("past");
-    } else if (timeNumber > presentHour) {
-      $(textEntry).addClass("future");
+//Pulls information previously put into local storage and puts it into corresponding areas
+function localStorageFunction() {
+  $("#text-entry1").val(localStorage.getItem("9AM"));
+  $("#text-entry2").val(localStorage.getItem("10AM"));
+  $("#text-entry3").val(localStorage.getItem("11AM"));
+  $("#text-entry4").val(localStorage.getItem("12PM"));
+  $("#text-entry5").val(localStorage.getItem("1PM"));
+  $("#text-entry6").val(localStorage.getItem("2PM"));
+  $("#text-entry7").val(localStorage.getItem("3PM"));
+  $("#text-entry8").val(localStorage.getItem("4PM"));
+  $("#text-entry9").val(localStorage.getItem("5PM"));
+}
+
+// Functions to pull and push data in and out of local storage to create planner
+localStorageFunction();
+
+//Button click function that saves information to local storage
+$("button").on("click", function (event) {
+  event.preventDefault();
+
+  localStorage.setItem("9AM", $("#text-entry1").val());
+  localStorage.setItem("10AM", $("#text-entry2").val());
+  localStorage.setItem("11AM", $("#text-entry3").val());
+  localStorage.setItem("12PM", $("#text-entry4").val());
+  localStorage.setItem("1PM", $("#text-entry5").val());
+  localStorage.setItem("2PM", $("#text-entry6").val());
+  localStorage.setItem("3PM", $("#text-entry7").val());
+  localStorage.setItem("4PM", $("#text-entry8").val());
+  localStorage.setItem("5PM", $("#text-entry9").val());
+});
+
+//Change box color according to if the time is present, past, or yet to come
+function changeBoxColor() {
+  let currentTime = moment().hours();
+  $(".col-sm-1").each(function () {
+    //I set ID's in the HTML to their corresponding military time and then ref. them see if they are equal, greater, or less than the actual time and then reflect the color accordingly
+    var setHour = $(this).attr("id");
+
+    if (setHour < currentTime) {
+      $(this).addClass("past");
+    } else if (setHour == currentTime) {
+      $(this).addClass("present");
     } else {
-      $(textEntry).addClass("present");
+      $(this).addClass("future");
     }
-    counter ++;
-  }
-
-  //Converts the string time selections in HTML to numbers so the code can pull from them and edit the planner according to what time it is
-  function hourNumberFromHourString(hourString) {
-      switch(hourString) {
-        case "8 AM": return 8;
-        case "9 AM": return 9;
-        case "10 AM": return 10;
-        case "11 AM": return 11;
-        case "12 PM": return 12;
-        case "1 PM": return 13;
-        case "2 PM": return 14;
-        case "3 PM": return 15;
-        case "4 PM": return 16;
-        case "5 PM": return 17;
-      }
-    }
-  
-
-//store the information provided by client into the localstorage and be able to pull it back out when needed
-$("button").click(function() {
-    value = $(this).siblings("textarea").val();
-    hourString = $(this).siblings("div").text();
-    
-    saveSchedule(hourString, value);
   });
-
-  function startLocalStorage() {
-    localStorage.setItem('workDay', JSON.stringify(workDay));
-  };
-  
-  function saveToLocalStorage(dayObj) {
-    localStorage.setItem('workDay', JSON.stringify(dayObj));
-  }
-  
-  function saveSchedule(hourString, val) {
-    if(!localStorage.getItem('workDay')) {
-      startLocalStorage();
-    }
-  
-    let workHours = JSON.parse(localStorage.getItem('workDay'));
-    workHours[hourString] = val
-  
-    saveToLocalStorage(workHours);
-  }
-
-  function updateCalendarTasks(dayObject) {
-    $(".calendar-row").each(function() {
-      let res = $(this).children("div");
-      $(this).children("textarea").text(dayObject[res.text()]);
-    })
-  }
+}
+changeBoxColor();
